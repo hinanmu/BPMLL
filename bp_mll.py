@@ -2,14 +2,8 @@
 #@Author    :zhounan
 # @FileName: bp_mll.py
 
-
-
-
-
-
-
-
-
+import numpy as np
+import tensorflow as tf
 
 
 
