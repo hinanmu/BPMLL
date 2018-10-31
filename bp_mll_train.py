@@ -9,8 +9,8 @@ def train(data_x, data_y):
     data_num = data_x.shape[0]
     feature_num = data_x.shape[1]
     label_num = data_y.shape[1]
-    x = tf.placeholder(tf.float32, shape=[None, feature_num])
-    y = tf.placeholder(tf.float32, shape=[None, label_num])
+    x = tf.placeholder(tf.float32, shape=[None, feature_num], name='input_x')
+    y = tf.placeholder(tf.float32, shape=[None, label_num], name='input_y')
 
     w1 = tf.Variable(tf.random_normal([feature_num, 3], stddev=1, seed=1))
     w2 = tf.Variable(tf.random_normal([3, label_num], stddev=1, seed=1))
@@ -23,8 +23,8 @@ def train(data_x, data_y):
     loss = loss_fun(y, y_pre)
 
     optimazer = tf.train.AdamOptimizer(0.001).minimize(loss)
+    tf.add_to_collection('pred_network', y)
 
-    print('begin to train')
     with tf.Session() as sess:
         init = tf.global_variables_initializer()
         sess.run(init)
@@ -88,6 +88,5 @@ def load_data():
     return train_x, train_y, test_x, test_y
 
 if __name__ == '__main__':
-    train_x, train_y, test_x, test_y = load_data()
-    train_y
+    train_x, train_y, _, _ = load_data()
     train(train_x, train_y)
