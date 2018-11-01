@@ -7,10 +7,15 @@
 | ------ | ------ | ------ |------ |------ |------ |------ |------ |------ |
 | yeast| biology | 2417	 |0|103	|14|4.237|0.303	|198|
 
+## Evaluation
+|evaluation criterion |algorithm |
+| ------ | ------ | 
+| hamming loss| 0.3057459592113057 |
 ## Requrements
 - Python 3.6
 - numpy 1.13.3
 - tensorflow 1.10.0
+- scikit-learn 0.19.1
 
 ## Reference
 [M.-L. Zhang, Z.-H. Zhou.Multilabel neural networks with applications to functional genomics and text categorization IEEE T. Knowl. Data En., 18 (10) (2006), pp. 1338-1351][2]
