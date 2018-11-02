@@ -1,6 +1,6 @@
 #@Time      :2018/10/12 16:27
 #@Author    :zhounan
-# @FileName: learning_error.py
+# @FileName: evaluate_model.py
 import numpy as np
 import scipy.io as sci
 

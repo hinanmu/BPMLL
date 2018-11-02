@@ -3,7 +3,7 @@
 # @FileName: bp_mll_test.py
 import numpy as np
 import tensorflow as tf
-from learning_error import hamming_loss
+from evaluate_model import hamming_loss
 from sklearn.linear_model import LinearRegression
 from sklearn.externals import joblib
 
