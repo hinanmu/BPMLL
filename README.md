@@ -8,7 +8,7 @@
 | yeast| biology | 2417	 |0|103	|14|4.237|0.303	|198|
 
 ## Evaluation
-|evaluation criterion |algorithm |
+|evaluation criterion |BPMLL |
 | ------ | ------ | 
 | hamming loss| 0.3057459592113057 |
 ## Requrements
