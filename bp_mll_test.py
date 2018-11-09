@@ -7,7 +7,7 @@ from evaluate_model import hamming_loss
 from sklearn.linear_model import LinearRegression
 from sklearn.externals import joblib
 
-def predict(test_x):
+def predict(x_test):
     with tf.Session() as sess:
         saver  = tf.train.import_meta_graph('./tf_model/model.meta')
         saver.restore(sess, 'tf_model/model')
@@ -15,7 +15,7 @@ def predict(test_x):
         pred = tf.get_collection('pred_network')[0]
         x = graph.get_operation_by_name('input_x').outputs[0]
 
-        pred = sess.run(pred, feed_dict={x: test_x})
+        pred = sess.run(pred, feed_dict={x: x_test})
 
     linreg = joblib.load('./sk_model/linear_model.pkl')
     threshold = linreg.predict(pred)
@@ -44,16 +44,16 @@ def eliminate_data(data_x, data_y):
     return data_x, data_y
 
 def load_data():
-    train_x = np.load('dataset/train_x.npy')
-    train_y = np.load('dataset/train_y.npy')
-    test_x = np.load('dataset/test_x.npy')
-    test_y = np.load('dataset/test_y.npy')
-    test_x, test_y = eliminate_data(test_x, test_y)
+    x_train = np.load('dataset/x_train.npy')
+    y_train = np.load('dataset/y_train.npy')
+    x_test = np.load('dataset/x_test.npy')
+    y_test = np.load('dataset/y_test.npy')
+    x_test, y_test = eliminate_data(x_test, y_test)
 
-    return train_x, train_y, test_x, test_y
+    return x_train, y_train, x_test, y_test
 
 if __name__ == '__main__':
-    _, _, test_x, test_y = load_data()
-    pred = predict(test_x)
-    loss = hamming_loss(pred, test_y)
+    _, _, x_test, y_test = load_data()
+    pred = predict(x_test)
+    loss = hamming_loss(pred, y_test)
     print(loss)

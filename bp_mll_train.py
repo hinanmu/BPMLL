@@ -118,13 +118,13 @@ def pairwise_and(a, b):
     return tf.logical_and(column, row)
 
 def load_data():
-    train_x = np.load('dataset/train_x.npy')
-    train_y = np.load('dataset/train_y.npy')
-    test_x = np.load('dataset/test_x.npy')
-    test_y = np.load('dataset/test_y.npy')
-    train_x, train_y = eliminate_data(train_x, train_y)
+    x_train = np.load('dataset/x_train.npy')
+    y_train = np.load('dataset/y_train.npy')
+    x_test = np.load('dataset/x_test.npy')
+    y_test = np.load('dataset/y_test.npy')
+    x_train, y_train = eliminate_data(x_train, y_train)
 
-    return train_x, train_y, test_x, test_y
+    return x_train, y_train, x_test, y_test
 
 #eliminate some data that have full true labels or full false labels
 #移除全1或者全0标签
@@ -145,5 +145,5 @@ def eliminate_data(data_x, data_y):
     return data_x, data_y
 
 if __name__ == '__main__':
-    train_x, train_y, _, _ = load_data()
-    train(train_x, train_y)
+    x_train, y_train, _, _ = load_data()
+    train(x_train, y_train)

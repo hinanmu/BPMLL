@@ -4,16 +4,16 @@
 import numpy as np
 import scipy.io as sci
 
-def hamming_loss(test_y, predict):
-    test_y = test_y.astype(np.int32)
+def hamming_loss(y_test, predict):
+    y_test = y_test.astype(np.int32)
     predict = predict.astype(np.int32)
-    label_num = test_y.shape[1]
-    test_data_num = test_y.shape[0]
+    label_num = y_test.shape[1]
+    test_data_num = y_test.shape[0]
     hmloss = 0
     temp = 0
 
     for i in range(test_data_num):
-        temp = temp + np.sum(test_y[i] ^ predict[i])
+        temp = temp + np.sum(y_test[i] ^ predict[i])
     #end for
     hmloss = temp / label_num / test_data_num
 
