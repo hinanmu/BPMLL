@@ -118,10 +118,10 @@ def pairwise_and(a, b):
     return tf.logical_and(column, row)
 
 def load_data():
-    x_train = np.load('dataset/x_train.npy')
-    y_train = np.load('dataset/y_train.npy')
-    x_test = np.load('dataset/x_test.npy')
-    y_test = np.load('dataset/y_test.npy')
+    x_train = np.load('dataset/yeast/x_train.npy')
+    y_train = np.load('dataset/yeast/y_train.npy')
+    x_test = np.load('dataset/yeast/x_test.npy')
+    y_test = np.load('dataset/yeast/y_test.npy')
     x_train, y_train = eliminate_data(x_train, y_train)
 
     return x_train, y_train, x_test, y_test
