@@ -10,7 +10,7 @@
 ## Evaluation
 |evaluation criterion |BPMLL |
 | ------ | ------ | 
-| hamming loss| 0.3057459592113057 |
+| hamming loss| 0.247546346782988 |
 ## Requrements
 - Python 3.6
 - numpy 1.13.3

@@ -23,7 +23,7 @@ def predict(x_test):
 
     #translate bool to int
     y_pred = y_pred + 0
-    return pred
+    return y_pred
 
 #eliminate some data that have full true labels or full false labels
 #移除全1或者全0标签
