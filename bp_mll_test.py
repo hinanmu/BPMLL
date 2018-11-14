@@ -48,7 +48,7 @@ def load_data():
     y_train = np.load('dataset/yeast/y_train.npy')
     x_test = np.load('dataset/yeast/x_test.npy')
     y_test = np.load('dataset/yeast/y_test.npy')
-    x_train, y_train = eliminate_data(x_train, y_train)
+    x_test, y_test = eliminate_data(x_test, y_test)
 
     return x_train, y_train, x_test, y_test
 
