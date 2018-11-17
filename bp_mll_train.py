@@ -4,10 +4,11 @@
 import numpy as np
 import tensorflow as tf
 from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Ridge
 from sklearn.externals import joblib
 from operator import itemgetter
 
-def train(data_x, data_y):
+def train(data_x, data_y, dataset_name):
     data_num = data_x.shape[0]
     feature_num = data_x.shape[1]
     label_num = data_y.shape[1]
@@ -44,11 +45,11 @@ def train(data_x, data_y):
                                            y: data_y[start:end]})
 
         pred = sess.run(pred, feed_dict={x: data_x})
-        train_threshold(data_x, data_y, pred)
+        train_threshold(data_x, data_y, pred, dataset_name)
         saver = tf.train.Saver()
-        saver.save(sess, "./tf_model/model")
+        saver.save(sess, './tf_model/' + dataset_name + '/model')
 
-def train_threshold(data_x, data_y, pred):
+def train_threshold(data_x, data_y, pred, dataset_name):
     data_num = data_x.shape[0]
     label_num = data_y.shape[1]
     threshold = np.zeros([data_num])
@@ -77,9 +78,9 @@ def train_threshold(data_x, data_y, pred):
                 min_val = val_measure
                 threshold[i] = (tup_list[j][0] + tup_list[j + 1][0]) / 2
 
-    linreg = LinearRegression()
+    linreg = Ridge(alpha=0.1)
     linreg.fit(pred, threshold)
-    joblib.dump(linreg, "./sk_model/linear_model.pkl")
+    joblib.dump(linreg, './sk_model/' + dataset_name + '/linear_model.pkl')
 
 def loss_fun(y, y_pre):
     shape = tf.shape(y)
@@ -148,6 +149,8 @@ def eliminate_data(data_x, data_y):
     return data_x, data_y
 
 if __name__ == '__main__':
-    x_train, y_train, _, _ = load_data('yeast')
-    train(x_train, y_train)
+    dataset_names = ['yeast','delicious']
+    dataset_name = dataset_names[0]
+    x_train, y_train, _, _ = load_data(dataset_name)
+    train(x_train, y_train, dataset_name)
     #train(x_train, y_train)
