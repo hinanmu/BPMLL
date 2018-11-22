@@ -21,8 +21,8 @@ def pro_iris_data():
 def arff2npy(dataset_name, label_count, split=True):
 
     if split:
-        train_file_path = '../dataset/original_dataset/' + dataset_name + '/' + dataset_name + '-train.arff'
-        test_file_path = '../dataset/original_dataset/' + dataset_name + '/' + dataset_name + '-test.arff'
+        train_file_path = './dataset/original_dataset/' + dataset_name + '/' + dataset_name + '-train.arff'
+        test_file_path = './dataset/original_dataset/' + dataset_name + '/' + dataset_name + '-test.arff'
 
         x_train, y_train = load_from_arff(train_file_path,
                                           label_count=label_count,
@@ -35,7 +35,7 @@ def arff2npy(dataset_name, label_count, split=True):
                                           label_location='end',
                                           load_sparse=False)
     else:
-        file_path = '../dataset/original_dataset/' + dataset_name + '/' + dataset_name + '.arff'
+        file_path = './dataset/original_dataset/' + dataset_name + '/' + dataset_name + '.arff'
         x, y = load_from_arff(file_path,
                               label_count=label_count,
                               input_feature_type='int',
@@ -49,18 +49,18 @@ def arff2npy(dataset_name, label_count, split=True):
     # x_test = x_test.astype(np.float64)
     # y_test = y_test.astype(np.int64)
 
-    np.save('../dataset/'+ dataset_name +'/x_train.npy', x_train.toarray())
-    np.save('../dataset/'+ dataset_name +'/y_train.npy', y_train.toarray())
-    np.save('../dataset/'+ dataset_name +'/x_test.npy', x_test.toarray())
-    np.save('../dataset/'+ dataset_name +'/y_test.npy', y_test.toarray())
+    np.save('./dataset/'+ dataset_name +'/x_train.npy', x_train.toarray())
+    np.save('./dataset/'+ dataset_name +'/y_train.npy', y_train.toarray())
+    np.save('./dataset/'+ dataset_name +'/x_test.npy', x_test.toarray())
+    np.save('./dataset/'+ dataset_name +'/y_test.npy', y_test.toarray())
 
 def loadnpy(dataset_name):
-    x_train = np.load('../dataset/'+ dataset_name + '/x_train.npy')
-    y_train = np.load('../dataset/'+ dataset_name + '/y_train.npy')
+    x_train = np.load('./dataset/'+ dataset_name + '/x_train.npy')
+    y_train = np.load('./dataset/'+ dataset_name + '/y_train.npy')
 
-    print(x_train)
+    print(x_train.shape, y_train.shape)
 
 if __name__ == '__main__':
-    dataset_name = 'bookmarks'
-    arff2npy(dataset_name, label_count=208, split=False)
+    dataset_name = 'yeast'
+    arff2npy(dataset_name, label_count=14, split=True)
     loadnpy(dataset_name)

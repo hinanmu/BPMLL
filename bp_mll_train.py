@@ -8,7 +8,7 @@ from sklearn.linear_model import Ridge
 from sklearn.externals import joblib
 from operator import itemgetter
 
-def train(data_x, data_y, dataset_name):
+def train(data_x, data_y, dataset_name, model_type):
     data_num = data_x.shape[0]
     feature_num = data_x.shape[1]
     label_num = data_y.shape[1]
@@ -16,23 +16,25 @@ def train(data_x, data_y, dataset_name):
     alpha = 0.1
     batch_size = 32
 
-    x = tf.placeholder(tf.float32, shape=[None, feature_num], name='input_x')
-    y = tf.placeholder(tf.float32, shape=[None, label_num], name='input_y')
+    g = tf.Graph()
+    with g.as_default():
+        x = tf.placeholder(tf.float32, shape=[None, feature_num], name='input_x')
+        y = tf.placeholder(tf.float32, shape=[None, label_num], name='input_y')
 
-    w1 = tf.Variable(tf.random_normal([feature_num, hidden_unit], stddev=1, seed=1))
-    w2 = tf.Variable(tf.random_normal([hidden_unit, label_num], stddev=1, seed=1))
+        w1 = tf.Variable(tf.random_normal([feature_num, hidden_unit], stddev=1, seed=1))
+        w2 = tf.Variable(tf.random_normal([hidden_unit, label_num], stddev=1, seed=1))
 
-    bias1 = tf.Variable(tf.random_normal([hidden_unit], stddev=0.01, seed=1))
-    bias2 = tf.Variable(tf.random_normal([label_num], stddev=0.01, seed=1))
+        bias1 = tf.Variable(tf.random_normal([hidden_unit], stddev=0.01, seed=1))
+        bias2 = tf.Variable(tf.random_normal([label_num], stddev=0.01, seed=1))
 
-    a = tf.nn.tanh(tf.matmul(x, w1) + bias1)
-    pred = tf.nn.tanh(tf.matmul(a, w2) + bias2)
-    tf.add_to_collection('pred_network', pred)
-    loss = loss_fun(y, pred) + tf.contrib.layers.l2_regularizer(alpha)(w1) + tf.contrib.layers.l2_regularizer(alpha)(w2)
+        a = tf.nn.tanh(tf.matmul(x, w1) + bias1)
+        pred = tf.nn.tanh(tf.matmul(a, w2) + bias2)
+        tf.add_to_collection('pred_network', pred)
+        loss = loss_fun(y, pred) + tf.contrib.layers.l2_regularizer(alpha)(w1) + tf.contrib.layers.l2_regularizer(alpha)(w2)
 
-    optimazer = tf.train.AdamOptimizer(0.05).minimize(loss)
+        optimazer = tf.train.AdamOptimizer(0.05).minimize(loss)
 
-    with tf.Session() as sess:
+    with tf.Session(graph=g) as sess:
         init = tf.global_variables_initializer()
         sess.run(init)
         steps = int(500 * data_num / batch_size)
@@ -45,11 +47,11 @@ def train(data_x, data_y, dataset_name):
                                            y: data_y[start:end]})
 
         pred = sess.run(pred, feed_dict={x: data_x})
-        train_threshold(data_x, data_y, pred, dataset_name)
+        train_threshold(data_x, data_y, pred, dataset_name, model_type)
         saver = tf.train.Saver()
-        saver.save(sess, './tf_model/' + dataset_name + '/model')
+        saver.save(sess, './tf_model/' + dataset_name + '/' + model_type  + '_model')
 
-def train_threshold(data_x, data_y, pred, dataset_name):
+def train_threshold(data_x, data_y, pred, dataset_name, model_type):
     data_num = data_x.shape[0]
     label_num = data_y.shape[1]
     threshold = np.zeros([data_num])
@@ -80,7 +82,7 @@ def train_threshold(data_x, data_y, pred, dataset_name):
 
     linreg = Ridge(alpha=0.1)
     linreg.fit(pred, threshold)
-    joblib.dump(linreg, './sk_model/' + dataset_name + '/linear_model.pkl')
+    joblib.dump(linreg, './sk_model/' + dataset_name + '/' + model_type  + '_linear_model.pkl')
 
 def loss_fun(y, y_pre):
     shape = tf.shape(y)
@@ -152,5 +154,8 @@ if __name__ == '__main__':
     dataset_names = ['yeast','delicious']
     dataset_name = dataset_names[0]
     x_train, y_train, _, _ = load_data(dataset_name)
-    train(x_train, y_train, dataset_name)
-    #train(x_train, y_train)
+
+    model_type = 'positive'
+    train(x_train, y_train, dataset_name, model_type)
+    model_type = 'negtive'
+    train(x_train, 1 - y_train, dataset_name, model_type)

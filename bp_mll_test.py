@@ -8,17 +8,17 @@ from sklearn.linear_model import Ridge
 from sklearn.externals import joblib
 import evaluate_model
 
-def predict(x_test, dataset_name):
+def predict(x_test, dataset_name, model_type):
     with tf.Session() as sess:
-        saver  = tf.train.import_meta_graph('./tf_model/' + dataset_name + '/model.meta')
-        saver.restore(sess, './tf_model/' + dataset_name + '/model')
+        saver  = tf.train.import_meta_graph('./tf_model/' + dataset_name + '/' + model_type + '_model.meta')
+        saver.restore(sess, './tf_model/' + dataset_name + '/' + model_type + '_model')
         graph = tf.get_default_graph()
         pred = tf.get_collection('pred_network')[0]
         x = graph.get_operation_by_name('input_x').outputs[0]
 
         pred = sess.run(pred, feed_dict={x: x_test})
 
-    linreg = joblib.load('./sk_model/' + dataset_name + '/linear_model.pkl')
+    linreg = joblib.load('./sk_model/' + dataset_name + '/' + model_type + '_linear_model.pkl')
     threshold = linreg.predict(pred)
     y_pred = ((pred.T - threshold.T) > 0).T
 
@@ -53,11 +53,24 @@ def load_data(dataset_name):
 
     return x_train, y_train, x_test, y_test
 
+def ensemble(pos_pred, neg_pred):
+    return pos_pred | neg_pred
+
 if __name__ == '__main__':
     dataset_names = ['yeast','delicious']
     dataset_name = dataset_names[0]
     _, _, x_test, y_test = load_data(dataset_name)
-    pred, output = predict(x_test, dataset_name)
-    print(dataset_name, 'hammingloss:',evaluate_model.hamming_loss(pred, y_test))
-    print(dataset_name, 'rankingloss:',evaluate_model.rloss(output, y_test))
-    print(dataset_name, 'oneerror:',evaluate_model.OneError(output, y_test))
+
+    model_type = 'positive'
+    pos_pred, pos_output = predict(x_test, dataset_name, model_type)
+    print(dataset_name, model_type, 'hammingloss:', evaluate_model.hamming_loss(pos_pred, y_test))
+
+    model_type = 'negtive'
+    pred, neg_output = predict(x_test, dataset_name, model_type)
+    neg_pred = 1 - pred
+    print(dataset_name, model_type, 'hammingloss:', evaluate_model.hamming_loss(neg_pred, y_test))
+    # print(dataset_name, 'rankingloss:', evaluate_model.rloss(output, y_test))
+    # print(dataset_name, 'oneerror:', evaluate_model.OneError(output, y_test))
+
+    ensemble_pred = ensemble(pos_pred, neg_pred)
+    print(dataset_name, 'ensemble hammingloss:', evaluate_model.hamming_loss(ensemble_pred, y_test))
